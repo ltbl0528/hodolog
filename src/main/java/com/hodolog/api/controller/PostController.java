@@ -1,9 +1,15 @@
 package com.hodolog.api.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 // 데이터 기반 API 응답을 생성
+@Slf4j // log를 위한 어노테이션
 @RestController
 public class PostController {
 
@@ -14,8 +20,19 @@ public class PostController {
     //   vue -> vue + SSR = nuxt.js
     //   react -> react + SSR = next.js
 
-    @GetMapping("/posts")
-    public String get() {
+    /**
+     * HTTP METHOD
+     *
+     * GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD, TRACE, CONNECT
+     *
+     * 글 등록
+     * POST METHOD
+     *
+     * */
+    @PostMapping("/posts")
+//    public String post(@RequestParam String title, @RequestParam String content) {
+    public String post(@RequestParam Map<String, String> params) {
+        log.info("params={}", params.toString());
         return "Hello World";
     }
 }
