@@ -10,9 +10,10 @@ import lombok.ToString;
 @ToString
 public class PostCreate {
 
-    @NotBlank
+    @NotBlank(message = "타이틀을 입력해주세요.")
     private String title;
-    @NotBlank
+
+    @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 }
 

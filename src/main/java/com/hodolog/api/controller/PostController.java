@@ -4,12 +4,15 @@ import com.hodolog.api.request.PostCreate;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // 데이터 기반 API 응답을 생성
-@Slf4j // log를 위한 어노테이션
+@Slf4j
 @RestController
 public class PostController {
 
@@ -28,7 +31,7 @@ public class PostController {
      * */
     @PostMapping("/posts")
 //    public String post(@RequestParam String title, @RequestParam String content) {
-    public String post(@RequestBody @Valid PostCreate params, BindingResult result) {
+    public Map<String, String> post(@RequestBody @Valid PostCreate params, BindingResult result) {
         /**
          * 데이터를 검증하는 이유
          * 1. client 개발자가 값을 깜빡할 수 있다. (실수)
@@ -40,8 +43,22 @@ public class PostController {
          * 때마다 null check, empty string check를 할 수도 있겠지만 Spring에서 제공하는 어노테이션을 쓰자...
          * */
 
+        /**
+         * TODO: 여전히 해결해야 하는 문제점들이 있다... EX.매 메소드마다 이런 처리를 해줘야하는가에 대한
+         * ==> EXCEPTION에 대한 일괄처리가 가능하게끔 코드 변경이 필요하다
+         * */
+        if (result.hasErrors()) {
+            List<FieldError> fieldErrors = result.getFieldErrors();
+            FieldError firstFieldError = fieldErrors.get(0);
+            String fieldName = firstFieldError.getField(); // title
+            String errMsg    = firstFieldError.getDefaultMessage(); // error message
+
+            Map<String, String> error = new HashMap<>();
+            error.put(fieldName, errMsg);
+            return error;
+        }
         log.info("params={}", params.toString());
 
-        return "Hello World";
+        return Map.of();
     }
 }

@@ -40,10 +40,10 @@ class PostControllerTest {
         // expected
         mockMvc.perform(post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"\",\"content\":\"내용입니다.\"}")
+                        .content("{\"title\": null, \"content\":\"내용입니다.\"}")
                 )
                 .andExpect(status().isOk())
-                .andExpect(content().string("Hello World"))
+                .andExpect(jsonPath("$.title").value("타이틀을 입력해주세요.")) // TODO: junit5 jsonPath 검증법 찾아보기 (오브젝트, 배열 검증)
                 .andDo(print());
     }
 
