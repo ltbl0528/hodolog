@@ -20,24 +20,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ExceptionController {
 
+    @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseBody
     public ErrorResponse invalidRequestHandler(MethodArgumentNotValidException e) {
-//        FieldError fieldError = e.getFieldError();
-//        String field = fieldError.getField();
-//        String message = fieldError.getDefaultMessage();
-//        Map<String, String> response = new HashMap<>();
-//        response.put(field, message);
-//        return response;
-
 //        if (e.hasErrors()) {
-           ErrorResponse response = new ErrorResponse("400", "잘못된 요청입니다.");
+           ErrorResponse response = ErrorResponse.builder()
+                   .code("400")
+                   .message("잘못된 요청입니다.")
+                   .build();
 
            for (FieldError filedError : e.getFieldErrors()) {
                response.addValidation(filedError.getField(), filedError.getDefaultMessage());
            }
-
 //        } else { // 에러가 없는 게 발생할 수 있는 거임?
 //
 //        }

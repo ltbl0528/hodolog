@@ -1,7 +1,9 @@
 package com.hodolog.api.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hodolog.api.domain.Post;
 import com.hodolog.api.repository.PostRepository;
+import com.hodolog.api.request.PostCreate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,6 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class PostControllerTest {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,25 +42,42 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("/posts 요청 시 hello world를 출력한다.")
+    @DisplayName("/posts 요청 시 빈값을 출력한다.")
     void test() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        // ObjectMapper를 이용하여 Object를 JSON 형태로 가공
+        String json = objectMapper.writeValueAsString(request);
+
         // expected
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"제목입니다.\",\"content\":\"내용입니다.\"}")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
                 )
                 .andExpect(status().isOk())
-                .andExpect(content().string("{}"))
+                .andExpect(content().string(""))
                 .andDo(print());
     }
 
     @Test
     @DisplayName("/posts 요청 시 title 값은 필수다.")
-    void test2() throws Exception {
+    void shouldReturnErrorWhenTitleIsMissingInPostRequest() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .content("내용입니다.")
+                .build();
+
+        // ObjectMapper를 이용하여 Object를 JSON 형태로 가공
+        String json = objectMapper.writeValueAsString(request);
+
         // expected
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\": null, \"content\":\"내용입니다.\"}")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
@@ -66,11 +89,20 @@ class PostControllerTest {
 
     @Test
     @DisplayName("/posts 요청 시 DB에 값이 저장된다.")
-    void test3() throws Exception {
+    void shouldSaveValueToDatabaseWhenPostRequestIsMade() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        // ObjectMapper를 이용하여 Object를 JSON 형태로 가공
+        String json = objectMapper.writeValueAsString(request);
+
         // when
         mockMvc.perform(post("/posts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\": \"제목입니다.\", \"content\":\"내용입니다.\"}")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -80,7 +112,7 @@ class PostControllerTest {
 
         Post post = postRepository.findAll().get(0);
 
-        assertEquals("제목입니다.222", post.getTitle());
-        assertEquals("내용입니다.222", post.getContent());
+        assertEquals("제목입니다.", post.getTitle());
+        assertEquals("내용입니다.", post.getContent());
     }
 }
