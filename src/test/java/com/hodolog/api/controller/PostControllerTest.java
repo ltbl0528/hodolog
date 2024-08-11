@@ -1,6 +1,8 @@
 package com.hodolog.api.controller;
 
+import com.hodolog.api.domain.Post;
 import com.hodolog.api.repository.PostRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * !!각각의 테스트 메소드들이 다른 테스트에 영향이 가지 않도록 만드는 게 상당히 중요!!
+ * */
 @SpringBootTest
 @AutoConfigureMockMvc
 class PostControllerTest {
@@ -24,6 +29,12 @@ class PostControllerTest {
     @Autowired
     private PostRepository postRepository;
 
+    // 각각의 테스트가 수행 전에 이게 먼저 실행됨
+    @BeforeEach
+    void clean() {
+        postRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("/posts 요청 시 hello world를 출력한다.")
     void test() throws Exception {
@@ -33,7 +44,7 @@ class PostControllerTest {
                         .content("{\"title\":\"제목입니다.\",\"content\":\"내용입니다.\"}")
                 )
                 .andExpect(status().isOk())
-                .andExpect(content().string("Hello World"))
+                .andExpect(content().string("{}"))
                 .andDo(print());
     }
 
@@ -59,12 +70,17 @@ class PostControllerTest {
         // when
         mockMvc.perform(post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\": \"제목입니다\", \"content\":\"내용입니다.\"}")
+                        .content("{\"title\": \"제목입니다.\", \"content\":\"내용입니다.\"}")
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
 
         // then
-        assertEquals(2L, postRepository.count());
+        assertEquals(1L, postRepository.count());
+
+        Post post = postRepository.findAll().get(0);
+
+        assertEquals("제목입니다.222", post.getTitle());
+        assertEquals("내용입니다.222", post.getContent());
     }
 }

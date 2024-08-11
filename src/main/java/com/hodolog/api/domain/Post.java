@@ -2,9 +2,13 @@ package com.hodolog.api.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.accessibility.AccessibleContext;
+
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Post {
 
