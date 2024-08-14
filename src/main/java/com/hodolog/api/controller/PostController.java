@@ -1,5 +1,6 @@
 package com.hodolog.api.controller;
 
+import com.hodolog.api.domain.Post;
 import com.hodolog.api.request.PostCreate;
 import com.hodolog.api.service.PostService;
 import jakarta.validation.Valid;
@@ -39,5 +40,15 @@ public class PostController {
     public void post(@RequestBody @Valid PostCreate request) {
         // POST -> 200, 201
         postService.write(request);
+    }
+
+    /**
+     * /posts -> 글 전체 조회 (검색 + 페이징)
+     * /posts/{postId} -> 특정 글 하나만 조회
+     * */
+    @GetMapping("/posts/{postId}")
+    public Post get(@PathVariable(name = "postId") Long id) {
+        Post post = postService.get(id);
+        return post;
     }
 }
