@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Request 클래스 : 요청과 검증 정책을 담은 클래스
+ * */
 @Getter
 @Setter
 @ToString
@@ -17,12 +20,6 @@ public class PostCreate {
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
-    /**
-     * builder pattern 에 대해 알아보자
-     * builder의 장점? :
-     * 1. 가독성이 좋다 (값 생성이 유연함)
-     * 2. 필요한 값만 받을 수 있다 (오버로딩 가능한 조건을 찾아보세요)ㄴ
-     * */
     @Builder
     public PostCreate(String title, String content) {
         this.title = title;

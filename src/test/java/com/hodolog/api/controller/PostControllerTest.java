@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -121,7 +120,7 @@ class PostControllerTest {
     void shouldRetrieveAPost() throws Exception {
         // given
         Post post = Post.builder()
-                .title("foo")
+                .title("12134213121354542213")
                 .content("bar")
                 .build();
 
@@ -132,7 +131,7 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(post.getId()))
-                .andExpect(jsonPath("$.title").value("foo"))
+                .andExpect(jsonPath("$.title").value("1213421312"))
                 .andExpect(jsonPath("$.content").value("bar"))
                 .andDo(print());
 

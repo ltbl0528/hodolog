@@ -2,6 +2,7 @@ package com.hodolog.api.controller;
 
 import com.hodolog.api.domain.Post;
 import com.hodolog.api.request.PostCreate;
+import com.hodolog.api.response.PostResponse;
 import com.hodolog.api.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +48,17 @@ public class PostController {
      * /posts/{postId} -> 특정 글 하나만 조회
      * */
     @GetMapping("/posts/{postId}")
-    public Post get(@PathVariable(name = "postId") Long id) {
-        Post post = postService.get(id);
-        return post;
+    public PostResponse get(@PathVariable(name = "postId") Long id) {
+        // Request 클래스
+        // Response 클래스
+
+        PostResponse response = postService.get(id);
+        // 서비스 정책에 맞는 응답 클래스 분리하기
+        /*
+        * ex. 만약에 클라이언트 쪽에서 타이틀을 10자 이내로 잘라주세요... 같은 요청이 온다면
+        *     (사실 이런 건 클라쪽에서 처리하긴 함)
+        * 대충 이런 정책이 있을 경우에 그 정책에 맞는 응답 클래스를 생성하는 게 좋다는 소리임
+        * */
+        return response;
     }
 }
