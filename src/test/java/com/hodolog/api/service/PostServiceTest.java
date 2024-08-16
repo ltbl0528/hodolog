@@ -10,7 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class PostServiceTest {
@@ -66,5 +69,26 @@ class PostServiceTest {
         assertNotNull(response);
         assertEquals("foo", response.getTitle());
         assertEquals("bar", response.getContent());
+    }
+
+    @Test
+    @DisplayName("글 여러 개 조회")
+    void shouldRetrievePosts() {
+        // given
+        postRepository.saveAll(List.of(Post.builder()
+                        .title("foo1")
+                        .content("bar1")
+                        .build(),
+                Post.builder()
+                        .title("foo2")
+                        .content("bar2")
+                        .build()
+        ));
+
+        // when
+        List<PostResponse> posts = postService.getList();
+
+        // then
+        assertEquals(2L, posts.size());
     }
 }
