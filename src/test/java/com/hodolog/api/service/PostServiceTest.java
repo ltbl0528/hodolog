@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,21 +74,20 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 여러 개 조회")
-    void shouldRetrievePosts() {
+    @DisplayName("글 1 페이지 조회")
+    void shouldRetrieveFirstPageOfPosts() {
         // given
-        postRepository.saveAll(List.of(Post.builder()
-                        .title("foo1")
-                        .content("bar1")
-                        .build(),
-                Post.builder()
-                        .title("foo2")
-                        .content("bar2")
-                        .build()
-        ));
+        List<Post> requestPosts = IntStream.range(0, 30)
+                .mapToObj(i -> Post.builder()
+                        .title("호돌맨 제목 - " + i)
+                        .content("반포자이 - " + i)
+                        .build())
+                .collect(Collectors.toList());
+        postRepository.saveAll(requestPosts);
 
+        // sql -> limit, offset
         // when
-        List<PostResponse> posts = postService.getList();
+        List<PostResponse> posts = postService.getList(1);
 
         // then
         assertEquals(2L, posts.size());

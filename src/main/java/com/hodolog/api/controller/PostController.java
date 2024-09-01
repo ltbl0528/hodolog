@@ -64,11 +64,14 @@ public class PostController {
     /**
      * 여러 건의 글 조회 기능
      * /posts
+     * [글을 전체 조회 하는 경우]
+     * 1. 글이 너무 많을 경우 DB가 뻗을 수 있음
+     * 2. DB -> APP 전달 시간, 트래픽 비용 많이 발생
      * TODO: 페이지네이션
      */
     @GetMapping("/posts")
     public List<PostResponse> getList() {
-        return postService.getList();
+        return postService.getList(1);
     }
 
 }
